@@ -35,8 +35,8 @@ export default function AdminPage() {
   }
 
   // Handle Edit Save
-  const handleEditSave = async (id, email, password) => {
-    const updates = { email, password };
+  const handleEditSave = async (id, email, password, name, role, position) => {
+    const updates = { email, password, name, role, position };
     const res = await updateUser(id, updates);
     if (res.success) {
       alert('성공적으로 수정되었습니다.');
@@ -172,43 +172,71 @@ export default function AdminPage() {
 function EditUserModal({ user, onClose, onSave }) {
   const [email, setEmail] = useState(user.email || '');
   const [password, setPassword] = useState(user.password || '');
+  const [name, setName] = useState(user.name || '');
+  const [role, setRole] = useState(user.role || 'trainee');
+  const [position, setPosition] = useState(user.position || '');
 
   return (
     <div className="modal-overlay" onClick={onClose} style={{ zIndex: 1000 }}>
-      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-        <h2 style={{ marginBottom: '16px' }}>✏️ 계정 정보 수정</h2>
-        <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div className="avatar">{user.avatar}</div>
-          <div>
-            <div style={{ fontWeight: 700 }}>{user.name}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)' }}>{roleLabels[user.role]}</div>
-          </div>
-        </div>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '450px' }}>
+        <h2 style={{ marginBottom: '24px' }}>✏️ 계정 정보 수정</h2>
         
-        <div className="form-group">
-          <label className="form-label">로그인 이메일</label>
-          <input 
-            type="email" 
-            className="input" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            placeholder="example@rnd.com"
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">비밀번호</label>
-          <input 
-            type="text" 
-            className="input" 
-            value={password} 
-            onChange={e => setPassword(e.target.value)} 
-            placeholder="초기 비밀번호 입력"
-          />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+            <label className="form-label">이름</label>
+            <input 
+              type="text" 
+              className="input" 
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">역할</label>
+            <select className="input" value={role} onChange={e => setRole(e.target.value)}>
+              <option value="trainee">공채 사원</option>
+              <option value="mentor">멘토</option>
+              <option value="team_lead">팀장</option>
+              <option value="admin">관리자</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">직급 (예: 연구원)</label>
+            <input 
+              type="text" 
+              className="input" 
+              value={position} 
+              onChange={e => setPosition(e.target.value)} 
+            />
+          </div>
+
+          <div className="form-group" style={{ gridColumn: '1 / -1', marginTop: '8px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+            <label className="form-label">로그인 이메일</label>
+            <input 
+              type="email" 
+              className="input" 
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              placeholder="example@rnd.com"
+            />
+          </div>
+          <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+            <label className="form-label">비밀번호</label>
+            <input 
+              type="text" 
+              className="input" 
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              placeholder="초기 비밀번호 입력"
+            />
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '32px' }}>
           <button className="btn btn-secondary" onClick={onClose}>취소</button>
-          <button className="btn btn-primary" onClick={() => onSave(user.id, email, password)}>저장하기</button>
+          <button className="btn btn-primary" onClick={() => onSave(user.id, email, password, name, role, position)}>저장하기</button>
         </div>
       </div>
     </div>
