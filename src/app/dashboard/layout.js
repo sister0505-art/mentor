@@ -118,6 +118,18 @@ export default function DashboardLayout({ children }) {
               {item.label}
             </Link>
           ))}
+          {currentUser?.role === 'admin' && (
+            <>
+              <div className="sidebar-section-label" style={{ color: '#fbbf24' }}>관리자</div>
+              <Link
+                href="/dashboard/admin"
+                className={`sidebar-link ${isActive('/dashboard/admin') ? 'active' : ''}`}
+              >
+                <span className="sidebar-link-icon">👑</span>
+                계정 관리
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="sidebar-user">

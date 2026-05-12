@@ -100,6 +100,31 @@ export function DataProvider({ children }) {
   const getUsersByTeam = (teamId) => users.filter((u) => u.team_id === teamId);
   const getTrainees = () => users.filter((u) => u.role === 'trainee');
 
+  // User Management
+  const updateUser = async (id, updates) => {
+    // Only email and password usually, but can be anything
+    const { error } = await supabase.from('profiles').update(updates).eq('id', id);
+    if (!error) fetchData();
+    return { success: !error };
+  };
+
+  const addUser = async (userData) => {
+    // Generate UUID if not provided by Supabase automatically
+    // But since Supabase handles default uuid for id, we just insert.
+    // Make sure teamId -> team_id, mentorId -> mentor_id mappings
+    const dbData = {
+      ...userData,
+      team_id: userData.teamId || null,
+      mentor_id: userData.mentorId || null,
+    };
+    delete dbData.teamId;
+    delete dbData.mentorId;
+    
+    const { data, error } = await supabase.from('profiles').insert(dbData).select().single();
+    if (!error) fetchData();
+    return { success: !error, data, error };
+  };
+
   // Posts
   const addPost = async (post) => {
     const newPostData = {
@@ -230,6 +255,8 @@ export function DataProvider({ children }) {
         deleteTrainingPlan,
         attachments,
         addAttachment,
+        updateUser,
+        addUser,
         loading,
         refreshData: fetchData
       }}
